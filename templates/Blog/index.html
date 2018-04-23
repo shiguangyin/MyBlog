@@ -1,0 +1,23 @@
+{% extends "Blog/base.html" %}
+{% block title %}
+    blog titles
+{% endblock %}
+
+{% block content %}
+    <div class="row text-center vertical-middle-sm">
+        <h1>My Blog</h1>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+            <ul>
+                {% for blog in blogs %}
+                    <li><a href="article/{{ blog.id }}">{{ blog.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-xs-6 col-md-4">
+            <h2>Masker</h2>
+            <p>shiguangyin928@gmail.com</p>
+        </div>
+    </div>
+{% endblock %}l %}
