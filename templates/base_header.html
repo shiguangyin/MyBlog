@@ -9,8 +9,13 @@
             <ul class="nav navbar-nav" role="navigation">
                 <li><a href="{% url 'Blog:index' %}">Blog</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Login</a></li>
+            <ul class="nav navbar-nav navbar-right" style="margin-right: 20px">
+                {% if user.is_authenticated %}
+                    <li><a href="#">{{ user.username }}</a></li>
+                    <li><a href="{% url 'Account:user_logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'Account:user_login' %}">Login</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>
