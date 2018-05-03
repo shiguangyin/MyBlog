@@ -122,3 +122,12 @@ STATICFILES_DIRS = (
 )
 
 LOGIN_REDIRECT_URL = "/blog/"
+
+EMAIL_HOST = "smtp.163.com"
+EMAIL_HOST_USER = "shiguangyin928@163.com"
+EMAIL_HOST_PASSWORD = "xxxxxxx"
+EMAIL_PORT = 25
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "shiguangyin928@163.com"
+
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
