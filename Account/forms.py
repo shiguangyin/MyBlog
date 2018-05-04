@@ -1,12 +1,13 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from Account.models import UserProfile
+from Account.models import UserProfile, UserInfo
 
 
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
+
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(label="Password", widget=forms.PasswordInput)
@@ -22,7 +23,20 @@ class RegistrationForm(forms.ModelForm):
             raise ValueError("password not match")
         return cd["password"]
 
+
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ("birthday", "phone")
+
+
+class UserInfoForm(forms.ModelForm):
+    class Meta:
+        model = UserInfo
+        fields = ("school", "address", "aboutme")
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("email",)

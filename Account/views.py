@@ -1,9 +1,12 @@
 from django.contrib.auth import login, authenticate
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 
 # Create your views here.
-from Account.forms import LoginForm, RegistrationForm, UserProfileForm
+from Account.forms import LoginForm, RegistrationForm, UserProfileForm, UserForm, UserInfoForm
+from Account.models import UserProfile, UserInfo
 
 
 def user_login(request):
@@ -37,6 +40,8 @@ def register(request):
             new_user_profile = user_profile_from.save(False)
             new_user_profile.user = new_user
             new_user_profile.save()
+            new_user_info = UserInfo.objects.create(user=new_user)
+            new_user_info.save()
             return HttpResponse("Register success!")
         else:
             return HttpResponse("Register failed!!!")
@@ -45,3 +50,60 @@ def register(request):
         user_profile_from = UserProfileForm()
         context = {"form": form, "user_profile_form": user_profile_from}
         return render(request, "Account/register.html", context)
+
+
+@login_required(login_url="/account/login/")
+def self_profile(request):
+    user = User.objects.get(username=request.user.username)
+    user_profile = UserProfile.objects.get(user=user)
+    user_info = UserInfo.objects.get(user=user)
+    context = {
+        "user": user,
+        "user_profile": user_profile,
+        "user_info": user_info
+    }
+    return render(request, "Account/self_profile.html", context)
+
+@login_required(login_url="/account/login")
+def edit_self_profile(request):
+    user = User.objects.get(username=request.user.username)
+    user_profile = UserProfile.objects.get(user=user)
+    user_info = UserInfo.objects.get(user=user)
+    if request.method == "POST":
+        user_form = UserForm(request.POST)
+        user_profile_form = UserProfileForm(request.POST)
+        user_info_form = UserInfoForm(request.POST)
+        if user_form.is_valid() and user_profile_form.is_valid() and user_info_form.is_valid():
+            user_cd = user_form.cleaned_data
+            user_profile_cd = user_profile_form.cleaned_data
+            user_info_cd = user_info_form.cleaned_data
+
+            user.email = user_cd["email"]
+            user_profile.birthday = user_profile_cd["birthday"]
+            user_profile.phone = user_profile_cd["phone"]
+            user_info.school = user_info_cd["school"]
+            user_info.address = user_info_cd["address"]
+            user_info.aboutme = user_info_cd["aboutme"]
+
+            user.save()
+            user_profile.save()
+            user_info.save()
+        return HttpResponseRedirect("/account/self_profile")
+    elif request.method == "GET":
+        user_form = UserForm(instance=request.user)
+        user_profile_form = UserProfileForm(initial={
+            "birthday": user_profile.birthday,
+            "phone": user_profile.phone
+        })
+        user_info_form = UserInfoForm(initial={
+            "school": user_info.school,
+            "address": user_info.address,
+            "aboutme": user_info.aboutme
+        })
+        context = {
+            "user_form": user_form,
+            "user_profile_form": user_profile_form,
+            "user_info_form": user_info_form
+        }
+        return render(request, "Account/edit_self_profile.html", context)
+

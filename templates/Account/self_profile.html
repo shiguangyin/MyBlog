@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}
+    Self Profile
+{% endblock %}
+
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+<h1>My information</h1>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-4 text-right"><span>Username:</span></div>
+            <div class="col-md-8 text-left">{{ user.username }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 text-right"><span>Email:</span></div>
+            <div class="col-md-8 text-left">{{ user.email }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 text-right"><span>Birthday:</span></div>
+            <div class="col-md-8 text-left">{{ user_profile.birthday }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 text-right"><span>Phone:</span></div>
+            <div class="col-md-8 text-left">{{ user_profile.phone }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 text-right"><span>School:</span></div>
+            <div class="col-md-8 text-left">{{ user_info.school }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 text-right"><span>Address:</span></div>
+            <div class="col-md-8 text-left">{{ user_info.address }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 text-right"><span>AboutMe:</span></div>
+            <div class="col-md-8 text-left">{{ user_info.aboutme }}</div>
+        </div>
+
+        <a class="btn btn-primary" href="{% url "Account:edit_self_profile" %}">Edit profile</a>
+
+    </div>
+    <div class="col-md-6">
+        <p>Picture</p>
+    </div>
+</div>
+</div>
+{% endblock %}

@@ -20,9 +20,10 @@
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                            <li><a href="{% url 'Account:password_change' %}">Change Password</a></li>
-                            <li><a href="{% url 'Account:user_logout' %}">Logout</a></li>
-                        </ul>
+                                <li><a href="{% url 'Account:password_change' %}">Change Password</a></li>
+                                <li><a href="{% url 'Account:user_logout' %}">Logout</a></li>
+                                <li><a href="{% url "Account:self_profile" %}">SelfProfile</a></li>
+                            </ul>
                         </div>
                     </li>
                 {% else %}

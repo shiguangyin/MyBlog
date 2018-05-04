@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Edit Self Profile
+{% endblock %}
+
+{% block content %}
+    <div class="row text-center vertical-middle-sm">
+        <h1>Edit My Information</h1>
+        <form action="{% url "Account:edit_self_profile" %}" class="form-horizontal" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 text-right"><span>Username:</span></div>
+                <div class="col-md-8 text-left">{{ user.username }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 text-right"><span>Email:</span></div>
+                <div class="col-md-8 text-left">{{ user_form.email }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 text-right"><span>Birthday:</span></div>
+                <div class="col-md-8 text-left">{{ user_profile_form.birthday }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 text-right"><span>Phone:</span></div>
+                <div class="col-md-8 text-left">{{ user_profile_form.phone }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 text-right"><span>School:</span></div>
+                <div class="col-md-8 text-left">{{ user_info_form.school }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 text-right"><span>Address:</span></div>
+                <div class="col-md-8 text-left">{{ user_info_form.address }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 text-right"><span>AboutMe:</span></div>
+                <div class="col-md-8 text-left">{{ user_info_form.aboutme }}</div>
+            </div>
+            <input type="submit" class="btn btn-primary" value="Submit">
+        </form>
+    </div>
+    <div class="col-md-6">
+        <p>Picture</p>
+    </div>
+
+{% endblock %}
