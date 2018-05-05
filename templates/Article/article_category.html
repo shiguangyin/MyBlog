@@ -1,0 +1,148 @@
+{% extends 'Article/base.html' %}
+{% load staticfiles %}
+{% block title %}
+    Article categories
+{% endblock %}
+
+{% block content %}
+    <div>
+        <p class="text-right">
+            <button class="btn btn-primary" onclick="add_new_category()">Add category</button>
+        </p>
+        {% if cates %}
+            <table class="table table-hover">
+                <tr>
+                    <td>Number</td>
+                    <td>Category</td>
+                    <td>Action</td>
+                </tr>
+
+                {% for cate in cates %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ cate.category }}</td>
+                    <td>
+                        <a href="javascript:" onclick="edit_category(this, {{ cate.id }})">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                        <a href="javascript:" onclick="delete_category(this, {{ cate.id }})" style="margin-left: 10px">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>There's no category</p>
+        {% endif %}
+
+
+    </div>
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/layer.js' %}"></script>
+    <script >
+        function add_new_category() {
+            var index = layer.open({
+                type: 1,
+                skin: "layui-layer-rim",
+                area: ['400px', '200px'],
+                title: "Add category",
+                content: ' <div class="text-center" style="margin-top: 20px">\n' +
+                '        <p>Input category</p>\n' +
+                '       {{ cate_form.category }}\n' +
+                '    </div>',
+                btn: ['Ok', "Cancel"],
+                yes: function (index, layero) {
+                    var cate_name = $("#id_category").val()
+                    $.ajax({
+                        url: '{% url 'Article:article_category' %}',
+                        type: 'POST',
+                        data: {
+                            'cate_name': cate_name
+                        },
+                        success: function (e) {
+                            if (e == "1"){
+                                parent.location.reload()
+                            } else {
+                                layer.msg("Category has exit!!!")
+                            }
+                        }
+                    })
+                },
+                btn2: function (index, layero) {
+                    layer.close(index)
+                }
+            })
+        }
+
+        function edit_category(the, cate_id) {
+            var name = $(the).parents("tr").children("td").eq(1).text()
+            var index = layer.open({
+                type: 1,
+                skin: 'layui-layer-rim',
+                area: ['400px', '200px'],
+                title: 'Edit category',
+                content: " <div class=\"text-center\" style=\"margin-top: 20px\">\n" +
+                "        <p>Edit category</p>\n" +
+                "        <input type=\"text\" id=\"new_name\" value=\"" +
+                "" +name+
+                "\">\n" +
+                "    </div>",
+                btn: ["Ok", "Cancel"],
+                yes: function (index, layero) {
+                    var new_name = $("#new_name").val()
+                    $.ajax({
+                        url: '{% url 'Article:category_rename' %}',
+                        type: 'POST',
+                        data: {
+                            'cate_id': cate_id,
+                            'cate_name': new_name
+                        },
+                        success: function (e) {
+                            if (e == '1'){
+                                parent.location.reload();
+                                layer.msg("Save success")
+                            } else {
+                                layer.msg("Save failed");
+                            }
+                        }
+                    })
+                }
+            })
+        }
+
+        function delete_category(the, cate_id) {
+            var name = $(the).parents("tr").children("td").eq(1).text()
+            layer.open({
+                type: 1,
+                skin: "layui-layer-rim",
+                area: ['400px', '200px'],
+                title: 'Delete category',
+                content: " <div class=\"text-center\" style=\"margin-top: 20px\"><p>Are you sure to delete " + name +
+                "?</p></div>",
+                btn: ['Ok', 'Cancel'],
+                yes: function () {
+                    $.ajax({
+                        url: "{% url 'Article:category_delete' %}",
+                        type: 'POST',
+                        data: {
+                            'cate_id': cate_id
+                        },
+                        success: function (e) {
+                            if (e == "1"){
+                                parent.location.reload();
+                                layer.msg("Delete success!!!");
+                            } else {
+                                layer.msg("Delete fail!!!")
+                            }
+                        }
+                    })
+                },
+                btn2: function () {
+                    layer.close()
+                }
+            })
+        }
+    </script>
+
+{% endblock %}
