@@ -46,5 +46,6 @@ urlpatterns = [
     path("password_reset_complete", auth_views.password_reset_complete, password_reset_complete,
          name="password_reset_complete"),
     path("self_profile", views.self_profile, name="self_profile"),
-    path("edit_self_profile", views.edit_self_profile, name="edit_self_profile")
+    path("edit_self_profile", views.edit_self_profile, name="edit_self_profile"),
+    path("image_crop", views.image_crop, name="image_crop")
 ]

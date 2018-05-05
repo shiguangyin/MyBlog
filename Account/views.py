@@ -62,7 +62,10 @@ def self_profile(request):
         "user_profile": user_profile,
         "user_info": user_info
     }
+    img = user_profile.avatar
+    print(img)
     return render(request, "Account/self_profile.html", context)
+
 
 @login_required(login_url="/account/login")
 def edit_self_profile(request):
@@ -107,3 +110,15 @@ def edit_self_profile(request):
         }
         return render(request, "Account/edit_self_profile.html", context)
 
+
+@login_required(login_url="/account/login")
+def image_crop(request):
+    if request.method == "POST":
+        img = request.POST["img"]
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_profile.avatar = img
+        user_profile.save()
+        return HttpResponse("1")
+
+    elif request.method == "GET":
+        return render(request, "Account/image_crop.html")
