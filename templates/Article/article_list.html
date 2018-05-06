@@ -1,0 +1,80 @@
+{% extends 'Article/base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    Article list
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <table class="table table-hover">
+            <tr>
+                <td>Index</td>
+                <td>Title</td>
+                <td>CreateTime</td>
+                <td>UpdateTime</td>
+                <td>Action</td>
+            </tr>
+            {% for article in articles %}
+                 <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href="{{ article.get_abs_url }}">{{ article.title }}</a></td>
+                    <td>{{ article.created_time }}</td>
+                    <td>{{ article.update_time }}</td>
+                    <td>
+                        <a href="{% url 'Article:article_edit' id=article.id %}"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a href="javascript:" onclick="delete_article(this, {{ article.id }})">
+                            <span class="glyphicon glyphicon-trash" style="margin-left: 10px"></span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+    {% include 'Article/pagination.html' %}
+{% endblock %}
+
+
+{% block js %}
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/layer.js' %}"></script>
+    <script>
+        function delete_article(the, article_id) {
+            var article_title = $(the).parents("tr").children("td").eq(1).text()
+            layer.open({
+                type: 1,
+                skin: "layui-layer-rim",
+                area: ['400px', '200px'],
+                title: "Delete Article",
+                content: "<div class=\"text-center\" style=\"margin-top: 10px\">\n" +
+                "    <p>Are you sure to delete 《" + article_title +
+                "》?</p>\n" +
+                "</div>",
+                btn: ["Ok", "Cancel"],
+                yes: function () {
+                    $.ajax({
+                        url: "{% url 'Article:article_delete' %}",
+                        type: "POST",
+                        data: {
+                            'article_id': article_id
+                        },
+                        success: function(e){
+                            if (e == '1'){
+                                layer.msg("delete success");
+                                parent.location.reload();
+                            } else {
+                                layer.ms("delete failed");
+                            }
+                        }
+                    })
+                },
+                btn2: function(){
+                    layer.close()
+                }
+            })
+        }
+
+    </script>
+{% endblock %}

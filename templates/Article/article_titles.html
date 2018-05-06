@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}
+    ArticleTitles
+{% endblock %}
+
+{% block content %}
+    <div class="row text-center vertical-middle-sm">
+        <h1>Article list</h1>
+    </div>
+
+    <div class="container">
+        {% for article in articles %}
+            <div class="list-group">
+                <a href="{% url 'Article:article_list_detail' id=article.id slug=article.slug %}" class="list-group-item active">
+                    <h4 class="list-group-item-heading">{{ article.title }}</h4>
+                    <p class="list-group-item-text">Author: {{ article.author.username }}</p>
+                    <p class="list-group-item-text">Summary: {{ article.body|slice:'70'|linebreaks }}</p>
+                </a>
+            </div>
+        {% endfor %}
+
+    </div>
+    {% include 'Article/pagination.html' %}
+{% endblock %}
