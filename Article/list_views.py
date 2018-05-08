@@ -1,10 +1,20 @@
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
-from django.core.paginator import  Paginator, EmptyPage, PageNotAnInteger
+
 from Article.models import ArticlePost
 
 
-def article_titles(request):
-    article_list = ArticlePost.objects.all()
+def article_titles(request, username=None):
+    if username:
+        user = User.objects.get(username=username)
+        try:
+            user_profile = user.user_profile
+        except:
+            user_profile = None
+        article_list = ArticlePost.objects.filter(author=user)
+    else:
+        article_list = ArticlePost.objects.all()
     paginator = Paginator(article_list, 2)
     page_num = request.GET.get("page")
     try:
@@ -18,8 +28,12 @@ def article_titles(request):
         articles = current_page.object_list
     context = {
         'articles': articles,
-        'page': current_page
+        'page': current_page,
     }
+    if username:
+        context['user'] = user
+        context['usr_profile'] = user_profile
+        return render(request, 'Article/author_articles.html', context)
     return render(request, 'Article/article_titles.html', context)
 
 

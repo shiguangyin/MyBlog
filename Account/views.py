@@ -2,9 +2,11 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
+from django.urls import reverse
+
 from Account.forms import LoginForm, RegistrationForm, UserProfileForm, UserForm, UserInfoForm
 from Account.models import UserProfile, UserInfo
 
@@ -42,7 +44,7 @@ def register(request):
             new_user_profile.save()
             new_user_info = UserInfo.objects.create(user=new_user)
             new_user_info.save()
-            return HttpResponse("Register success!")
+            return redirect(reverse('Account:user_login'))
         else:
             return HttpResponse("Register failed!!!")
     elif request.method == "GET":

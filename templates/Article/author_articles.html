@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 {% block title %}
     ArticleTitles
 {% endblock %}
@@ -9,7 +10,8 @@
     </div>
 
     <div class="container">
-        {% for article in articles %}
+        <div class="col-md-8">
+            {% for article in articles %}
             <div class="list-group">
                 <a href="{% url 'Article:article_list_detail' id=article.id slug=article.slug %}" class="list-group-item active">
                     <h4 class="list-group-item-heading">{{ article.title }}</h4>
@@ -18,8 +20,21 @@
                     <p class="list-group-item-text">Summary: {{ article.body|slice:'70'|linebreaks }}</p>
                 </a>
             </div>
-        {% endfor %}
-
+            {% endfor %}
+            {% include 'Article/pagination.html' %}
+        </div>
+        <div class="col-md-4">
+            {% if user_profile.avatar %}
+                <img src="{{ user_profile.avatar|striptags }}" alt="UserAvatar" class="img-circle">
+            {% else %}
+                <img src="{%  static 'images/default_avatar.jpg'%}" alt="UserAvatar" class="img-circle">
+            {% endif %}
+            <p>{{ user.username }}</p>
+            {% if user_profile %}
+                <p>{{ user_profile.phone }}</p>
+            {% else %}
+                <p>There's nothing!!!</p>
+            {% endif %}
+        </div>
     </div>
-    {% include 'Article/pagination.html' %}
 {% endblock %}

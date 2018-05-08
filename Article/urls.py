@@ -14,5 +14,6 @@ urlpatterns = [
     path("delete", views.article_delete, name="article_delete"),
     path("edit/<id>", views.article_edit, name="article_edit"),
     path("article_list/<id>/<slug>", list_views.article_detail, name="article_list_detail"),
-    path("", list_views.article_titles, name="article_titles")
+    path("article_titles/<username>", list_views.article_titles, name="author_article_titles"),
+    path("article_titles", list_views.article_titles, name="article_titles")
 ]
