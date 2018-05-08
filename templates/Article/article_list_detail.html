@@ -1,4 +1,4 @@
-{% extends 'Article/base.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% block title %}
     {{ article.title }}
@@ -8,9 +8,21 @@
     <link rel="stylesheet" href="{%  static 'editor/css/editormd.preview.css'%}">
 {% endblock %}
 {% block content %}
-    <header>
+{% with toal_likes=article.user_like.count   user_likes=article.user_like.all %}
+
+<div class="col-md-9">
+   <header>
         <h1>{{ article.title }}</h1>
-        <p>{{ article.author }}</p>
+        <a href="{% url 'Article:author_article_titles' article.author.username %}">
+            {{ article.author.username }}
+        </a>
+        <span style="margin-left: 20px" class="glyphicon glyphicon-thumbs-up">
+            {{ toal_likes }} like{{ toal_likes|pluralize }}
+        </span>
+
+       <span class="glyphicon glyphicon-eye-open" style="margin-left: 20px">
+            {{ total_views }}View{{ total_views|pluralize }}
+        </span>
     </header>
     <div id="editormd-view">
         <textarea name="" id="append-test" style="display: none">
@@ -18,6 +30,66 @@
         </textarea>
     </div>
 
+    <p class="text-center">
+        <a href="#" onclick="like_article({{ article.id }}, true)"><span class="glyphicon glyphicon-thumbs-up">Like</span></a>
+        <a href="#" onclick="like_article({{ article.id }}, false)" style="margin-left: 20px">
+            <span class="glyphicon glyphicon-thumbs-down">Unlike</span>
+        </a>
+    </p>
+
+    <div>
+        <p class="text-center"><strong>Who like this article</strong></p>
+        {% for user in user_likes %}
+            <p class="text-center">{{ user.username}}</p>
+        {% empty %}
+            <p class="text-center">There's no one like this article</p>
+        {% endfor %}
+
+    </div>
+
+    <br>
+    <div>
+        <h3><span class="glyphicon glyphicon-bullhorn"></span>This article has {{ article.comment.count }}条评论</h3>
+        {% for comment in comments %}
+            <div>
+                <p><strong>{{ comment.commentator }}</strong> : </p><p style="margin-left: 20px">{{ comment.body }}</p>
+            </div>
+        {% empty %}
+            <p>There's no comment</p>
+        {% endfor %}
+
+        <form action="{{ article.get_list_detail_url }}" class="form-horizontal" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="input" class="col-sm-2 control-label">Commentator</label>
+                <div class="col-sm-10">
+                    {{ comment_form.commentator }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input" class="col-sm-2 control-label">Comment</label>
+                <div class="col-sm-10">
+                    {{ comment_form.body }}
+                </div>
+            </div>
+            <input type="submit" value="Submit" class="btn btn-primary btn-primary-lg">
+        </form>
+
+    </div>
+</div>
+
+<div class="col-md-3">
+<p class="text-center">Most viewed articles</p>
+    <ol>
+        {% for ranked_article in most_viewed%}
+            <li><a href="{{ ranked_article.get_abs_url }}">{{ ranked_article.title }}</a></li>
+        {% endfor %}
+
+    </ol>
+</div>
+
+
+{% endwith %}
 {% endblock %}
 
 {% block js %}
@@ -31,6 +103,7 @@
     <script src="{% static 'editor/lib/flowchart.min.js' %}"></script>
     <script src="{% static 'editor/lib/jquery.flowchart.min.js' %}"></script>
     <script src="{% static 'editor/editormd.js' %}"></script>
+    <script src="{% static 'js/layer.js' %}"></script>
     <script>
         $(function () {
             editormd.markdownToHTML("editormd-view", {
@@ -42,5 +115,28 @@
                 sequenceDiagram: true
             })
         });
+
+        function like_article(article_id, like) {
+            var action = like ? "1": "0";
+            $.ajax({
+                url: "{% url 'Article:article_like' %}",
+                type: 'POST',
+                data: {
+                    'id': article_id,
+                    'action': action
+                },
+                success: function (e) {
+                    if (e == "1"){
+                        layer.msg("Like success");
+                        window.location.reload();
+                    } else if (e == "0") {
+                        layer.msg("Unlike success");
+                        window.location.reload();
+                    } else {
+                        layer.msg("Action failed!!!");
+                    }
+                }
+            })
+        }
     </script>
 {% endblock %}

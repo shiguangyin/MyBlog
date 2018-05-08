@@ -38,3 +38,18 @@ class ArticlePost(models.Model):
     def get_abs_url(self):
         return reverse("Article:article_detail", args=[self.id, self.slug])
 
+    def get_list_detail_url(self):
+        return reverse('Article:article_list_detail', args=[self.id, self.slug])
+
+class Comment(models.Model):
+    article = models.ForeignKey(ArticlePost, related_name="comment", on_delete=models.CASCADE)
+    commentator = models.CharField(max_length=90)
+    body = models.TextField()
+    created_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('-created_time', )
+
+    def __str__(self):
+        return f"Comment by {self.commentator} on {self.article}"
+

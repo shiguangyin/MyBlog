@@ -7,7 +7,10 @@ from django.views.decorators.http import require_POST
 
 from Article.forms import ArticleCategoryForm, ArticlePostForm
 from Article.models import ArticleCategory, ArticlePost
+import redis
+from MyBlog import settings
 
+r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
 @login_required(login_url="/account/login")
 @csrf_exempt
@@ -110,8 +113,10 @@ def article_list(request):
 @login_required(login_url='/account/login')
 def article_detail(request, id, slug):
     article = get_object_or_404(ArticlePost, id=id, slug=slug)
+    total_views = r.incr(f"article:{article.id}:views")
     context = {
-        "article": article
+        "article": article,
+        "total_views": total_views
     }
     return render(request, "Article/article_detail.html", context)
 
