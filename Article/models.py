@@ -21,6 +21,7 @@ class ArticlePost(models.Model):
     body = models.TextField()
     created_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
+    user_like = models.ManyToManyField(User, related_name="article_like", blank=True)
 
     class Meta:
         ordering = ("title", )

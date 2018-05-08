@@ -15,5 +15,6 @@ urlpatterns = [
     path("edit/<id>", views.article_edit, name="article_edit"),
     path("article_list/<id>/<slug>", list_views.article_detail, name="article_list_detail"),
     path("article_titles/<username>", list_views.article_titles, name="author_article_titles"),
-    path("article_titles", list_views.article_titles, name="article_titles")
+    path("article_titles", list_views.article_titles, name="article_titles"),
+    path("article_like", list_views.article_like, name='article_like')
 ]

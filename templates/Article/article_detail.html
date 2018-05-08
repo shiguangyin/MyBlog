@@ -8,16 +8,41 @@
     <link rel="stylesheet" href="{%  static 'editor/css/editormd.preview.css'%}">
 {% endblock %}
 {% block content %}
+{% with toal_likes=article.user_like.count   user_likes=article.user_like.all%}
+<div class="container">
     <header>
         <h1>{{ article.title }}</h1>
-        <p>{{ article.author }}</p>
+        <a href="{% url 'Article:author_article_titles' article.author.username %}">
+            {{ article.author.username }}
+        </a>
+        <span style="margin-left: 20px" class="glyphicon glyphicon-thumbs-up">
+            {{ toal_likes }}like{{ toal_likes|pluralize }}
+        </span>
     </header>
     <div id="editormd-view">
         <textarea name="" id="append-test" style="display: none">
 {{ article.body }}
         </textarea>
     </div>
+    <p class="text-center">
+        <a href="#" onclick="like_article({{ article.id }}, true)"><span class="glyphicon glyphicon-thumbs-up">Like</span></a>
+        <a href="#" onclick="like_article({{ article.id }}, false)" style="margin-left: 20px">
+            <span class="glyphicon glyphicon-thumbs-down">Unlike</span>
+        </a>
+    </p>
 
+    <div>
+        <p class="text-center"><strong>Who like this article</strong></p>
+        {% for user in user_likes %}
+            <p class="text-center">{{ user.username}}</p>
+        {% empty %}
+            <p class="text-center">There's no one like this article</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endwith %}
 {% endblock %}
 
 {% block js %}
@@ -31,6 +56,7 @@
     <script src="{% static 'editor/lib/flowchart.min.js' %}"></script>
     <script src="{% static 'editor/lib/jquery.flowchart.min.js' %}"></script>
     <script src="{% static 'editor/editormd.js' %}"></script>
+    <script src="{% static 'js/layer.js' %}"></script>
     <script>
         $(function () {
             editormd.markdownToHTML("editormd-view", {
@@ -42,5 +68,29 @@
                 sequenceDiagram: true
             })
         });
+
+        function like_article(article_id, like) {
+            var action = like ? "1": "0";
+            $.ajax({
+                url: "{% url 'Article:article_like' %}",
+                type: 'POST',
+                data: {
+                    'id': article_id,
+                    'action': action
+                },
+                success: function (e) {
+                    if (e == "1"){
+                        layer.msg("Like success");
+                        window.location.reload();
+                    } else if (e == "0") {
+                        layer.msg("Unlike success");
+                        window.location.reload();
+                    } else {
+                        layer.msg("Action failed!!!");
+                    }
+                }
+            })
+        }
     </script>
+
 {% endblock %}
